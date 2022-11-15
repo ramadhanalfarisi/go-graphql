@@ -8,6 +8,8 @@ import (
 	"strconv"
 
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -19,6 +21,10 @@ var (
 )
 
 func init() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal(err)
+	}
 	var f *os.File
 	filepath := os.Getenv("FILEPATH")
 	log_path := filepath + "/logs/" + date + ".txt"

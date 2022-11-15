@@ -3,12 +3,14 @@ package app
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/ramadhanalfarisi/go-graphql-kocak/helpers"
 	"github.com/ramadhanalfarisi/go-graphql-kocak/routers"
 )
@@ -16,6 +18,10 @@ import (
 var host, uname, password, port, dbname string
 
 func init() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal(err)
+	}
 	if env := os.Getenv("ENVIRONMMENT"); env == "production" {
 		port = os.Getenv("PORT_PRODDUCTION")
 		host = os.Getenv("HOST_PRODDUCTION")
