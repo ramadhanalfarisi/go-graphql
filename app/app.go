@@ -45,19 +45,22 @@ func init() {
 
 type App struct {
 	Router *mux.Router
+	RouterGraph *mux.Router
 	DB     *sql.DB
 }
 
 func (a *App) Routes() {
 	r := mux.NewRouter()
 	graph := r.PathPrefix("/graph").Subrouter()
-	a.Router = graph
+	a.Router = r
+	a.RouterGraph = graph
 	a.listRouter()
 }
 
 func (a *App) listRouter() {
 	router := routers.Router{}
 	router.Router = a.Router
+	router.RouterGraph = a.RouterGraph
 	router.DB = a.DB
 
 	router.ProdRouters()

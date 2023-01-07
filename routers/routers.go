@@ -8,5 +8,6 @@ import (
 
 type Router struct {
 	Router *mux.Router
+	RouterGraph *mux.Router
 	DB *sql.DB
 }

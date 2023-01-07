@@ -19,6 +19,6 @@ func (router *Router) ProdRouters() {
 		GraphiQL: false,
 	})
 
-	router.Router.Handle("/products",handleProducts).Methods("POST")
+	router.RouterGraph.Handle("/products",handleProducts).Methods("POST")
 	router.Router.HandleFunc("/products", controller.InsertProducts).Methods("POST")
 }
