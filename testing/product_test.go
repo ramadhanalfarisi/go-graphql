@@ -1,6 +1,7 @@
 package testing
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -16,6 +17,7 @@ var a app.App
 
 func TestMain(m *testing.M) {
 	a.ConnectDB()
+	a.Routes()
 
 	code := m.Run()
 	clearTable()
@@ -53,7 +55,13 @@ func insertProducts(i int) {
 func TestGetProducts(t *testing.T) {
 	clearTable()
 	insertProducts(5)
-	req, _ := http.NewRequest("GET", "/graph/products", nil)
+	data := []byte(`query {
+		products {
+			productID
+			productName
+		}
+	}`)
+	req, _ := http.NewRequest("POST", "/graph/products", bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 
 	response := executeRequest(req)
