@@ -23,7 +23,7 @@ func (c *Controller) InsertProducts(w http.ResponseWriter, r *http.Request) {
 		for i := range products {
 			errors = validateModel(products[i], i, &errors)
 		}
-		if errors != nil {
+		if errors == nil {
 			err := product.InsertProducts(db, products)
 			if err != nil {
 				helpers.Error(err)

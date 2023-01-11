@@ -8,7 +8,7 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	log.Println("Your application running on http://localhost:8082")
+	log.Println("Your application running on http://localhost:8080")
 	app := app.App{}
 	app.ConnectDB()
 	app.Routes()

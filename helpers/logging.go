@@ -21,13 +21,13 @@ var (
 )
 
 func init() {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal(err)
 	}
 	var f *os.File
-	filepath := os.Getenv("FILEPATH")
-	log_path := filepath + "/logs/" + date + ".txt"
+	filepath := os.Getenv("LOCAL_FILEPATH")
+	log_path := filepath + "logs/" + date + ".txt"
 	if _, err := os.Stat(log_path); os.IsNotExist(err) {
 		var errcreate error
 		f, errcreate = os.Create(log_path)
@@ -36,7 +36,7 @@ func init() {
 		}
 	} else {
 		var erropen error
-		f, erropen = os.Open(log_path)
+		f, erropen = os.OpenFile(log_path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 		if erropen != nil {
 			log.Fatal(erropen)
 		}

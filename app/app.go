@@ -3,50 +3,52 @@ package app
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"time"
-
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/ramadhanalfarisi/go-graphql-kocak/helpers"
 	"github.com/ramadhanalfarisi/go-graphql-kocak/routers"
+	"net/http"
+	"os"
+	"time"
 )
 
 var host, uname, password, port, dbname string
 
 func init() {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal(err)
+		helpers.Error(err)
 	}
 	if env := os.Getenv("ENVIRONMMENT"); env == "production" {
-		port = os.Getenv("PORT_PRODDUCTION")
-		host = os.Getenv("HOST_PRODDUCTION")
-		uname = os.Getenv("UNAME_PRODDUCTION")
-		password = os.Getenv("PASS_PRODDUCTION")
-		dbname = os.Getenv("DBNAME_PRODDUCTION")
+		port = os.Getenv("DB_PORT")
+		host = os.Getenv("DB_HOST")
+		uname = os.Getenv("DB_USER")
+		password = os.Getenv("DB_PASSWORD")
+		dbname = os.Getenv("DB_NAME")
 	} else if env == "development" {
-		port = os.Getenv("PORT_DEVELOPMENT")
-		host = os.Getenv("HOST_DEVELOPMENT")
-		uname = os.Getenv("UNAME_DEVELOPMENT")
-		password = os.Getenv("PASS_DEVELOPMENT")
-		dbname = os.Getenv("DBNAME_DEVELOPMENT")
+		port = os.Getenv("DB_PORT_DEV")
+		host = os.Getenv("DB_HOST_DEV")
+		uname = os.Getenv("DB_USER_DEV")
+		password = os.Getenv("DB_PASSWORD_DEV")
+		dbname = os.Getenv("DB_NAME_DEV")
 	} else {
-		port = os.Getenv("PORT_TESTING")
-		host = os.Getenv("HOST_TESTING")
-		uname = os.Getenv("UNAME_TESTING")
-		password = os.Getenv("PASS_TESTING")
-		dbname = os.Getenv("DBNAME_TESTING")
+		port = os.Getenv("DB_PORT_TEST")
+		host = os.Getenv("DB_HOST_TEST")
+		uname = os.Getenv("DB_USER_TEST")
+		password = os.Getenv("DB_PASSWORD_TEST")
+		dbname = os.Getenv("DB_NAME_TEST")
 	}
 }
 
 type App struct {
-	Router *mux.Router
+	Router      *mux.Router
 	RouterGraph *mux.Router
-	DB     *sql.DB
+	DB          *sql.DB
 }
 
 func (a *App) Routes() {
@@ -71,12 +73,29 @@ func (a *App) Run() {
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
 	origins := handlers.AllowedOrigins([]string{"*"})
 
-	http.ListenAndServe(port, handlers.CORS(headers, methods, origins)(a.Router))
+	http.ListenAndServe(":8080", handlers.CORS(headers, methods, origins)(a.Router))
+}
+
+func (a *App) Migrate() {
+	driver, err := postgres.WithInstance(a.DB, &postgres.Config{})
+	if err != nil {
+		helpers.Error(err)
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://./migrations",
+		"postgres", driver)
+	if err != nil {
+		helpers.Error(err)
+	}
+	err2 := m.Up()
+	if err2 != nil {
+		helpers.Error(err2)
+	}
 }
 
 func (a *App) ConnectDB() {
-	strCon := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", uname, password, host, port, dbname)
-	db, err := sql.Open("mysql", strCon)
+	strCon := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, uname, password, dbname)
+	db, err := sql.Open("postgres", strCon)
 	if err != nil {
 		helpers.Error(err)
 	}
@@ -84,4 +103,5 @@ func (a *App) ConnectDB() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 	a.DB = db
+	a.Migrate()
 }

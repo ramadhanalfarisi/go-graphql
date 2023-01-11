@@ -1,0 +1,4 @@
+[ERROR] 2023/01/11 09:50:04 logging.go:75: no change [github.com/ramadhanalfarisi/go-graphql-kocak/app.(*App).Migrate:C:/bahaya/Berkembang/go/src/github.com/ramadhanalfarisi/go-graphql-kocak/app/app.go:92]
+[ERROR] 2023/01/11 09:52:01 logging.go:75: no change [github.com/ramadhanalfarisi/go-graphql-kocak/app.(*App).Migrate:C:/bahaya/Berkembang/go/src/github.com/ramadhanalfarisi/go-graphql-kocak/app/app.go:92]
+[ERROR] 2023/01/11 10:03:15 logging.go:75: no change [github.com/ramadhanalfarisi/go-graphql-kocak/app.(*App).Migrate:C:/bahaya/Berkembang/go/src/github.com/ramadhanalfarisi/go-graphql-kocak/app/app.go:92]
+[ERROR] 2023/01/11 10:14:36 logging.go:75: no change [github.com/ramadhanalfarisi/go-graphql-kocak/app.(*App).Migrate:C:/bahaya/Berkembang/go/src/github.com/ramadhanalfarisi/go-graphql-kocak/app/app.go:92]
