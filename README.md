@@ -1,1 +1,2 @@
-# go-graphql-kocak
+# go-graphql
+A simple graphql project
